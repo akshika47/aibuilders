@@ -65,11 +65,29 @@ class FoodAnalyzer {
         this.retakeBtn.addEventListener('click', () => this.resetToUpload());
         this.newAnalysisBtn.addEventListener('click', () => this.resetToUpload());
         this.retryBtn.addEventListener('click', () => this.analyzeFood());
+        
+        // Additional buttons
+        document.getElementById('newAnalysisBtnBottom').addEventListener('click', () => this.resetToUpload());
+        document.getElementById('helpBtn').addEventListener('click', () => this.showHelp());
+        document.getElementById('closeHelp').addEventListener('click', () => this.hideHelp());
+        document.getElementById('expandInsights').addEventListener('click', () => this.toggleInsights());
 
         // Keyboard accessibility
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
-                this.resetToUpload();
+                const modal = document.getElementById('helpModal');
+                if (modal.classList.contains('active')) {
+                    this.hideHelp();
+                } else {
+                    this.resetToUpload();
+                }
+            }
+        });
+        
+        // Modal click outside to close
+        document.getElementById('helpModal').addEventListener('click', (e) => {
+            if (e.target.id === 'helpModal') {
+                this.hideHelp();
             }
         });
     }
@@ -104,13 +122,13 @@ class FoodAnalyzer {
     processFile(file) {
         // Validate file type
         if (!file.type.startsWith('image/')) {
-            this.showError('Please select a valid image file.');
+            this.showError('Please upload a valid image file (JPG, PNG, WebP).');
             return;
         }
 
         // Validate file size (10MB limit)
         if (file.size > 10 * 1024 * 1024) {
-            this.showError('File size must be less than 10MB.');
+            this.showError('File size must be less than 10MB. Please choose a smaller image.');
             return;
         }
 
@@ -119,9 +137,26 @@ class FoodAnalyzer {
         reader.onload = (e) => {
             this.currentImage = file;
             this.previewImage.src = e.target.result;
+            this.displayFileInfo(file);
             this.showPreview();
         };
         reader.readAsDataURL(file);
+    }
+
+    displayFileInfo(file) {
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        
+        fileName.textContent = file.name;
+        fileSize.textContent = this.formatFileSize(file.size);
+    }
+
+    formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     }
 
     showSection(section) {
@@ -197,9 +232,17 @@ class FoodAnalyzer {
 
         } catch (error) {
             console.error('Analysis error:', error);
-            this.showError(
-                error.message || 'Failed to analyze the image. Please try again.'
-            );
+            let errorMessage = 'We could not analyze your food image. ';
+            
+            if (error.message.includes('network') || error.message.includes('fetch')) {
+                errorMessage += 'Please check your internet connection and try again.';
+            } else if (error.message.includes('500')) {
+                errorMessage += 'Our analysis service is temporarily unavailable. Please try again in a few moments.';
+            } else {
+                errorMessage += 'Please ensure your image is clear and shows food, then try again.';
+            }
+            
+            this.showError(errorMessage);
         }
     }
 
@@ -231,10 +274,12 @@ class FoodAnalyzer {
             return;
         }
 
-        items.forEach(item => {
+        items.forEach((item, index) => {
             const itemElement = document.createElement('span');
             itemElement.className = 'food-item';
             itemElement.textContent = item;
+            itemElement.setAttribute('role', 'listitem');
+            itemElement.setAttribute('aria-label', `Food item ${index + 1}: ${item}`);
             this.foodItemsList.appendChild(itemElement);
         });
     }
@@ -307,6 +352,42 @@ class FoodAnalyzer {
             `;
             this.ingredientsList.appendChild(ingredientElement);
         });
+    }
+
+    showHelp() {
+        const modal = document.getElementById('helpModal');
+        modal.classList.add('active');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        
+        // Focus the close button for accessibility
+        document.getElementById('closeHelp').focus();
+    }
+
+    hideHelp() {
+        const modal = document.getElementById('helpModal');
+        modal.classList.remove('active');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        
+        // Return focus to help button
+        document.getElementById('helpBtn').focus();
+    }
+
+    toggleInsights() {
+        const button = document.getElementById('expandInsights');
+        const content = document.getElementById('healthInsights');
+        const isExpanded = button.getAttribute('aria-expanded') === 'true';
+        
+        if (isExpanded) {
+            button.setAttribute('aria-expanded', 'false');
+            button.setAttribute('aria-label', 'Expand health insights');
+            content.classList.remove('expanded');
+        } else {
+            button.setAttribute('aria-expanded', 'true');
+            button.setAttribute('aria-label', 'Collapse health insights');
+            content.classList.add('expanded');
+        }
     }
 }
 

@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
     <div class="app-container">
         <!-- Header -->
         <header class="header">
@@ -18,13 +19,16 @@
                         <i class="fas fa-brain"></i>
                     </div>
                     <h1>CAL AI</h1>
+                    <button class="help-btn" id="helpBtn" aria-label="Learn about CAL AI" title="Calorie Analysis with AI">
+                        <i class="fas fa-question-circle" aria-hidden="true"></i>
+                    </button>
                 </div>
-                <p class="tagline">AI-Powered Nutritional Analysis</p>
+                <p class="tagline">Calorie Analysis with AI - Instant Nutritional Insights</p>
             </div>
         </header>
 
         <!-- Main Content -->
-        <main class="main-content">
+        <main class="main-content" id="main-content">
             <!-- Upload Section -->
             <div class="upload-section" id="uploadSection">
                 <div class="upload-card" id="uploadArea">
@@ -36,14 +40,19 @@
                         <p>Drag and drop an image or click to browse</p>
                         
                         <div class="upload-buttons">
-                            <button class="btn btn-primary" id="cameraBtn">
-                                <i class="fas fa-camera"></i>
-                                Camera
+                            <button class="btn btn-primary" id="cameraBtn" aria-label="Take photo with camera">
+                                <i class="fas fa-camera" aria-hidden="true"></i>
+                                <span class="desktop-hidden">Take Photo</span>
+                                <span class="mobile-hidden">Upload from Camera</span>
                             </button>
-                            <button class="btn btn-outline" id="uploadBtn">
-                                <i class="fas fa-folder-open"></i>
+                            <button class="btn btn-outline" id="uploadBtn" aria-label="Browse and select image file">
+                                <i class="fas fa-folder-open" aria-hidden="true"></i>
                                 Browse Files
                             </button>
+                        </div>
+                        
+                        <div class="upload-help">
+                            <p><small>Supported formats: JPG, PNG, WebP • Max size: 10MB</small></p>
                         </div>
                     </div>
                 </div>
@@ -56,15 +65,21 @@
             <!-- Preview Section -->
             <div class="preview-section" id="previewSection" style="display: none;">
                 <div class="image-preview">
-                    <img id="previewImage" alt="Food preview">
+                    <div class="preview-image-container">
+                        <img id="previewImage" alt="Preview of uploaded food image">
+                        <div class="file-info" id="fileInfo">
+                            <span class="file-name" id="fileName"></span>
+                            <span class="file-size" id="fileSize"></span>
+                        </div>
+                    </div>
                     <div class="preview-actions">
-                        <button class="btn btn-primary" id="analyzeBtn">
-                            <i class="fas fa-brain"></i>
+                        <button class="btn btn-primary" id="analyzeBtn" aria-label="Start AI analysis of the food image">
+                            <i class="fas fa-brain" aria-hidden="true"></i>
                             Analyze Food
                         </button>
-                        <button class="btn btn-ghost" id="retakeBtn">
-                            <i class="fas fa-redo"></i>
-                            Try Another
+                        <button class="btn btn-ghost" id="retakeBtn" aria-label="Remove current image and upload a different one">
+                            <i class="fas fa-times" aria-hidden="true"></i>
+                            Remove Image
                         </button>
                     </div>
                 </div>
@@ -82,24 +97,24 @@
             <!-- Results Section -->
             <div class="results-section" id="resultsSection" style="display: none;">
                 <div class="results-header">
-                    <h2>Nutritional Analysis</h2>
-                    <button class="btn btn-ghost" id="newAnalysisBtn">
-                        <i class="fas fa-plus"></i>
+                    <h2 id="analysis-heading">Nutritional Analysis</h2>
+                    <button class="btn btn-ghost" id="newAnalysisBtn" aria-label="Start a new food analysis">
+                        <i class="fas fa-plus" aria-hidden="true"></i>
                         New Analysis
                     </button>
                 </div>
 
                 <!-- Food Items -->
-                <div class="card">
+                <div class="card" role="region" aria-labelledby="food-items-heading">
                     <div class="card-header">
-                        <i class="fas fa-utensils"></i>
-                        <h3>Identified Food Items</h3>
+                        <i class="fas fa-utensils" aria-hidden="true"></i>
+                        <h3 id="food-items-heading">Identified Food Items</h3>
                     </div>
                     <div class="card-content">
-                        <div id="foodItemsList" class="food-items"></div>
+                        <div id="foodItemsList" class="food-items" role="list"></div>
                         <div class="portion-info">
                             <span class="portion-label">Estimated Portion:</span>
-                            <span id="portionSize">-</span>
+                            <span id="portionSize" aria-label="Estimated portion size">-</span>
                         </div>
                     </div>
                 </div>
@@ -153,13 +168,16 @@
                 </div>
 
                 <!-- Health Insights -->
-                <div class="card">
+                <div class="card" role="region" aria-labelledby="health-insights-heading">
                     <div class="card-header">
-                        <i class="fas fa-heart"></i>
-                        <h3>Health Insights</h3>
+                        <i class="fas fa-heart" aria-hidden="true"></i>
+                        <h3 id="health-insights-heading">Health Insights</h3>
+                        <button class="btn-expand" id="expandInsights" aria-label="Expand health insights" aria-expanded="false">
+                            <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                        </button>
                     </div>
                     <div class="card-content">
-                        <div id="healthInsights" class="insights-list"></div>
+                        <div id="healthInsights" class="insights-list expandable-content" aria-live="polite"></div>
                     </div>
                 </div>
 
@@ -172,6 +190,14 @@
                     <div class="card-content">
                         <div id="ingredientsList" class="ingredients-list"></div>
                     </div>
+                </div>
+                
+                <!-- Bottom Action Button -->
+                <div class="bottom-actions">
+                    <button class="btn btn-primary" id="newAnalysisBtnBottom" aria-label="Start a new food analysis">
+                        <i class="fas fa-plus" aria-hidden="true"></i>
+                        Start New Analysis
+                    </button>
                 </div>
             </div>
 
@@ -189,9 +215,43 @@
             </div>
         </main>
 
+        <!-- Help Modal -->
+        <div class="modal" id="helpModal" role="dialog" aria-labelledby="help-title" aria-hidden="true">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="help-title">About CAL AI</h2>
+                    <button class="modal-close" id="closeHelp" aria-label="Close help dialog">
+                        <i class="fas fa-times" aria-hidden="true"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h3>What is CAL AI?</h3>
+                    <p><strong>CAL AI</strong> stands for <strong>Calorie Analysis with AI</strong>. It uses advanced artificial intelligence to analyze food images and provide detailed nutritional information.</p>
+                    
+                    <h3>How to get the best results:</h3>
+                    <ul>
+                        <li>Take clear, well-lit photos of your food</li>
+                        <li>Include the entire meal or dish in the frame</li>
+                        <li>Avoid blurry or dark images</li>
+                        <li>For best accuracy, photograph food on a plain background</li>
+                    </ul>
+                    
+                    <h3>What you'll get:</h3>
+                    <ul>
+                        <li>Identification of food items and ingredients</li>
+                        <li>Estimated nutritional values (calories, protein, carbs, fat, etc.)</li>
+                        <li>Health insights and dietary recommendations</li>
+                        <li>Portion size estimates</li>
+                    </ul>
+                    
+                    <p><small><strong>Note:</strong> Nutritional values are estimates based on visual analysis. For precise dietary tracking, consult nutrition labels or a registered dietitian.</small></p>
+                </div>
+            </div>
+        </div>
+
         <!-- Footer -->
         <footer class="footer">
-            <p>Powered by OpenAI Vision API • Built with ❤️ for healthy eating</p>
+            <p>Powered by OpenAI Vision API • Built for healthy eating</p>
         </footer>
     </div>
 
