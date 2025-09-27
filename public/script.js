@@ -178,7 +178,7 @@ class FoodAnalyzer {
             const formData = new FormData();
             formData.append('image', this.currentImage);
 
-            const response = await fetch('/analyze-food', {
+            const response = await fetch('/.netlify/functions/analyze-food', {
                 method: 'POST',
                 body: formData
             });
