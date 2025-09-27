@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Nutrition Analyzer</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h1>CAL AI</h1>
+                </div>
+                <p class="tagline">AI-Powered Nutritional Analysis</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Upload Section -->
+            <div class="upload-section" id="uploadSection">
+                <div class="upload-card" id="uploadArea">
+                    <div class="upload-content">
+                        <div class="upload-icon-wrapper">
+                            <i class="fas fa-image upload-icon"></i>
+                        </div>
+                        <h2>Upload Food Image</h2>
+                        <p>Drag and drop an image or click to browse</p>
+                        
+                        <div class="upload-buttons">
+                            <button class="btn btn-primary" id="cameraBtn">
+                                <i class="fas fa-camera"></i>
+                                Camera
+                            </button>
+                            <button class="btn btn-outline" id="uploadBtn">
+                                <i class="fas fa-folder-open"></i>
+                                Browse Files
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Hidden file input -->
+                <input type="file" id="fileInput" accept="image/*" style="display: none;">
+                <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display: none;">
+            </div>
+
+            <!-- Preview Section -->
+            <div class="preview-section" id="previewSection" style="display: none;">
+                <div class="image-preview">
+                    <img id="previewImage" alt="Food preview">
+                    <div class="preview-actions">
+                        <button class="btn btn-primary" id="analyzeBtn">
+                            <i class="fas fa-brain"></i>
+                            Analyze Food
+                        </button>
+                        <button class="btn btn-ghost" id="retakeBtn">
+                            <i class="fas fa-redo"></i>
+                            Try Another
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading Section -->
+            <div class="loading-section" id="loadingSection" style="display: none;">
+                <div class="loading-content">
+                    <div class="loading-spinner"></div>
+                    <h3>Analyzing your food...</h3>
+                    <p>AI is identifying ingredients and calculating nutrition</p>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results-section" id="resultsSection" style="display: none;">
+                <div class="results-header">
+                    <h2>Nutritional Analysis</h2>
+                    <button class="btn btn-ghost" id="newAnalysisBtn">
+                        <i class="fas fa-plus"></i>
+                        New Analysis
+                    </button>
+                </div>
+
+                <!-- Food Items -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-utensils"></i>
+                        <h3>Identified Food Items</h3>
+                    </div>
+                    <div class="card-content">
+                        <div id="foodItemsList" class="food-items"></div>
+                        <div class="portion-info">
+                            <span class="portion-label">Estimated Portion:</span>
+                            <span id="portionSize">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nutrition Facts -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-chart-pie"></i>
+                        <h3>Nutrition Facts</h3>
+                        <div class="health-score">
+                            <span class="score-label">Health Score</span>
+                            <div class="score-circle" id="healthScore">
+                                <span id="scoreValue">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="nutrition-grid">
+                            <div class="nutrition-item">
+                                <div class="nutrition-label">Calories</div>
+                                <div class="nutrition-value" id="calories">-</div>
+                                <div class="nutrition-unit">kcal</div>
+                            </div>
+                            <div class="nutrition-item">
+                                <div class="nutrition-label">Protein</div>
+                                <div class="nutrition-value" id="protein">-</div>
+                                <div class="nutrition-unit">g</div>
+                            </div>
+                            <div class="nutrition-item">
+                                <div class="nutrition-label">Carbs</div>
+                                <div class="nutrition-value" id="carbs">-</div>
+                                <div class="nutrition-unit">g</div>
+                            </div>
+                            <div class="nutrition-item">
+                                <div class="nutrition-label">Fat</div>
+                                <div class="nutrition-value" id="fat">-</div>
+                                <div class="nutrition-unit">g</div>
+                            </div>
+                            <div class="nutrition-item">
+                                <div class="nutrition-label">Fiber</div>
+                                <div class="nutrition-value" id="fiber">-</div>
+                                <div class="nutrition-unit">g</div>
+                            </div>
+                            <div class="nutrition-item">
+                                <div class="nutrition-label">Sugar</div>
+                                <div class="nutrition-value" id="sugar">-</div>
+                                <div class="nutrition-unit">g</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Health Insights -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-heart"></i>
+                        <h3>Health Insights</h3>
+                    </div>
+                    <div class="card-content">
+                        <div id="healthInsights" class="insights-list"></div>
+                    </div>
+                </div>
+
+                <!-- Ingredients -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-list"></i>
+                        <h3>Ingredient Breakdown</h3>
+                    </div>
+                    <div class="card-content">
+                        <div id="ingredientsList" class="ingredients-list"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error Section -->
+            <div class="error-section" id="errorSection" style="display: none;">
+                <div class="error-content">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Analysis Failed</h3>
+                    <p id="errorMessage">Something went wrong. Please try again.</p>
+                    <button class="btn btn-primary" id="retryBtn">
+                        <i class="fas fa-redo"></i>
+                        Try Again
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Powered by OpenAI Vision API • Built with ❤️ for healthy eating</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
